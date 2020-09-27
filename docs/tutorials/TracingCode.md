@@ -85,12 +85,12 @@ Recall from the User Guide that the `edit` command has the format: `edit INDEX [
         //Parse user input from String to a Command
         Command command = addressBookParser.parseCommand(commandText);
         //Executes the Command and stores the result
-        commandResult = command.execute(model);
+        commandResult = command.execute(modelPerson);
 
         try {
-            //We can deduce that the previous line of code modifies model in some way
+            //We can deduce that the previous line of code modifies modelPerson in some way
             // since it's being stored here.
-            storage.saveAddressBook(model.getAddressBook());
+            storagePerson.saveAddressBook(modelPerson.getAddressBook());
         } catch (IOException ioe) {
             throw new CommandException(FILE_OPS_ERROR_MESSAGE + ioe, ioe);
         }
@@ -150,22 +150,22 @@ Recall from the User Guide that the `edit` command has the format: `edit INDEX [
 
    ``` java
    @Override
-   public CommandResult execute(Model model) throws CommandException {
+   public CommandResult execute(Model modelPerson) throws CommandException {
        ...
        Person personToEdit = lastShownList.get(index.getZeroBased());
        Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
-       if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
+       if (!personToEdit.isSamePerson(editedPerson) && modelPerson.hasPerson(editedPerson)) {
            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
        }
-       model.setPerson(personToEdit, editedPerson);
-       model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+       modelPerson.setPerson(personToEdit, editedPerson);
+       modelPerson.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
        return new CommandResult(String.format(MESSAGE_EDIT_PERSON_SUCCESS, editedPerson));
    }
    ```
 
-1. As suspected, `command#execute()` does indeed make changes to `model`.
+1. As suspected, `command#execute()` does indeed make changes to `modelPerson`.
 
-1. We can a closer look at how storage works by repeatedly stepping into the code until we arrive at
+1. We can a closer look at how storagePerson works by repeatedly stepping into the code until we arrive at
     `JsonAddressBook#saveAddressBook()`.
 
 1. Again, it appears that the heavy lifting is delegated. Let’s take a look at `JsonSerializableAddressBook`'s constructor.

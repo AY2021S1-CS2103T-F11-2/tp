@@ -9,11 +9,22 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
+
 ### Cao Wenjie
 
 <img src="images/shadowezz.png" width="200px">
 
 [[github](https://github.com/shadowezz)]
+[[portfolio](team/johndoe.md)]
+
+* Role: Developer
+* Responsibilities: 
+
+### Clara Adora
+
+<img src="images/claraadora.png" width="200px">
+
+[[github](https://github.com/claraadora)]
 [[portfolio](team/johndoe.md)]
 
 * Role: Developer
@@ -29,14 +40,14 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 * Role: Team Lead
 * Responsibilities: UI
 
-### Johnny Doe
+### Chrystal Quek
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/chrystalquek.png" width="200px">
 
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+[[github](http://github.com/chrystalquek)] [[portfolio](team/johndoe.md)]
 
 * Role: Developer
-* Responsibilities: Data
+* Responsibilities:
 
 ### Jean Doe
 

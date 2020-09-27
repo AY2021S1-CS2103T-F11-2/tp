@@ -13,21 +13,21 @@ import seedu.address.commons.core.Version;
 import seedu.address.commons.exceptions.DataConversionException;
 import seedu.address.commons.util.ConfigUtil;
 import seedu.address.commons.util.StringUtil;
-import seedu.address.logic.Logic;
-import seedu.address.logic.LogicManager;
-import seedu.address.model.AddressBook;
-import seedu.address.model.Model;
-import seedu.address.model.ModelManager;
-import seedu.address.model.ReadOnlyAddressBook;
-import seedu.address.model.ReadOnlyUserPrefs;
-import seedu.address.model.UserPrefs;
+import seedu.address.logic.LogicPerson;
+import seedu.address.logic.LogicPersonManager;
+import seedu.address.model.ModelPerson;
+import seedu.address.model.ModelPersonManager;
+import seedu.address.model.person.AddressBook;
+import seedu.address.model.person.ReadOnlyAddressBook;
+import seedu.address.model.person.ReadOnlyUserPrefs;
+import seedu.address.model.person.UserPrefs;
 import seedu.address.model.util.SampleDataUtil;
-import seedu.address.storage.AddressBookStorage;
-import seedu.address.storage.JsonAddressBookStorage;
-import seedu.address.storage.JsonUserPrefsStorage;
-import seedu.address.storage.Storage;
-import seedu.address.storage.StorageManager;
-import seedu.address.storage.UserPrefsStorage;
+import seedu.address.storage.StoragePerson;
+import seedu.address.storage.StoragePersonManager;
+import seedu.address.storage.person.AddressBookStorage;
+import seedu.address.storage.person.JsonAddressBookStorage;
+import seedu.address.storage.person.JsonUserPrefsStorage;
+import seedu.address.storage.person.UserPrefsStorage;
 import seedu.address.ui.Ui;
 import seedu.address.ui.UiManager;
 
@@ -41,9 +41,9 @@ public class MainApp extends Application {
     private static final Logger logger = LogsCenter.getLogger(MainApp.class);
 
     protected Ui ui;
-    protected Logic logic;
-    protected Storage storage;
-    protected Model model;
+    protected LogicPerson logic;
+    protected StoragePerson storagePerson;
+    protected ModelPerson modelPerson;
     protected Config config;
 
     @Override
@@ -57,13 +57,13 @@ public class MainApp extends Application {
         UserPrefsStorage userPrefsStorage = new JsonUserPrefsStorage(config.getUserPrefsFilePath());
         UserPrefs userPrefs = initPrefs(userPrefsStorage);
         AddressBookStorage addressBookStorage = new JsonAddressBookStorage(userPrefs.getAddressBookFilePath());
-        storage = new StorageManager(addressBookStorage, userPrefsStorage);
+        storagePerson = new StoragePersonManager(addressBookStorage, userPrefsStorage);
 
         initLogging(config);
 
-        model = initModelManager(storage, userPrefs);
+        modelPerson = initModelManager(storagePerson, userPrefs);
 
-        logic = new LogicManager(model, storage);
+        logic = new LogicPersonManager(modelPerson, storagePerson);
 
         ui = new UiManager(logic);
     }
@@ -73,11 +73,11 @@ public class MainApp extends Application {
      * The data from the sample address book will be used instead if {@code storage}'s address book is not found,
      * or an empty address book will be used instead if errors occur when reading {@code storage}'s address book.
      */
-    private Model initModelManager(Storage storage, ReadOnlyUserPrefs userPrefs) {
+    private ModelPerson initModelManager(StoragePerson storagePerson, ReadOnlyUserPrefs userPrefs) {
         Optional<ReadOnlyAddressBook> addressBookOptional;
         ReadOnlyAddressBook initialData;
         try {
-            addressBookOptional = storage.readAddressBook();
+            addressBookOptional = storagePerson.readAddressBook();
             if (!addressBookOptional.isPresent()) {
                 logger.info("Data file not found. Will be starting with a sample AddressBook");
             }
@@ -90,7 +90,7 @@ public class MainApp extends Application {
             initialData = new AddressBook();
         }
 
-        return new ModelManager(initialData, userPrefs);
+        return new ModelPersonManager(initialData, userPrefs);
     }
 
     private void initLogging(Config config) {
@@ -175,7 +175,7 @@ public class MainApp extends Application {
     public void stop() {
         logger.info("============================ [ Stopping Address Book ] =============================");
         try {
-            storage.saveUserPrefs(model.getUserPrefs());
+            storagePerson.saveUserPrefs(modelPerson.getUserPrefs());
         } catch (IOException e) {
             logger.severe("Failed to save preferences " + StringUtil.getDetails(e));
         }
